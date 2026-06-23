@@ -5,6 +5,7 @@ import {
   FaBars,
   FaBriefcase,
   FaCog,
+  FaEnvelope,
   FaFileAlt,
   FaHome,
   FaRocket,
@@ -49,6 +50,7 @@ const Navbar = () => {
     { path: "/", label: "Home", icon: FaHome },
     { path: "/jobs", label: "Jobs", icon: FaBriefcase },
     { path: "/about", label: "About", icon: FaUser },
+    { path: "/contact", label: "Contact", icon: FaEnvelope },
     { path: "/resume-builder", label: "Resume", icon: FaFileAlt },
     { path: "/resume-ats", label: "ATS Check", icon: FaSearch },
   ];

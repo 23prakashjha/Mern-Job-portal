@@ -22,6 +22,7 @@ const Footer = () => {
     { text: "Home", to: "/" },
     { text: "Find Jobs", to: "/jobs" },
     { text: "About", to: "/about" },
+    { text: "Contact", to: "/contact" },
     { text: "Resume Builder", to: "/resume-builder" },
     { text: "ATS Check", to: "/resume-ats" },
   ];
