@@ -23,7 +23,7 @@ app.use(limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://mern-job-portal-qewj.onrender.com'],
   credentials: true
 }));
 

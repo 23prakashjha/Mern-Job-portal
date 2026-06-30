@@ -33,7 +33,7 @@ const CompanyProfile = () => {
 
         // Handle logo: prepend base URL if backend returns relative path
         const logoUrl = res.data.logo
-          ? `${process.env.REACT_APP_API_BASE_URL || ""}/${res.data.logo}`
+          ? `${process.env.REACT_APP_API_BASE_URL || "https://mern-job-portal-qewj.onrender.com"}/${res.data.logo}`
           : null;
 
         setForm({ ...res.data, logo: null }); // reset file input

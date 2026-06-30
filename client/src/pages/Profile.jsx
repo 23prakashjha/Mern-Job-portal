@@ -146,7 +146,7 @@ const Profile = () => {
 
                   {app.resume && (
                     <a
-                      href={`http://localhost:5000${app.resume}`}
+                      href={`https://mern-job-portal-qewj.onrender.com${app.resume}`}
                       target="_blank"
                       rel="noreferrer"
                       className="flex items-center gap-2 mt-4 text-indigo-600 hover:underline"
