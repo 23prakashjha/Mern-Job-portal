@@ -200,4 +200,41 @@ router.get('/me', async (req, res) => {
   }
 });
 
+// Admin registration (requires secret key)
+router.post('/admin/register', [
+  body('name').trim().notEmpty().withMessage('Name is required'),
+  body('email').isEmail().normalizeEmail().withMessage('Please provide a valid email'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  body('adminSecret').notEmpty().withMessage('Admin secret key is required')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, message: 'Validation failed', errors: errors.array() });
+    }
+
+    const { name, email, password, adminSecret } = req.body;
+
+    if (adminSecret !== process.env.ADMIN_SECRET) {
+      return res.status(403).json({ success: false, message: 'Invalid admin secret key' });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'User already exists with this email' });
+    }
+
+    const user = await User.create({ name, email, password, role: 'admin' });
+    const token = generateToken(user._id);
+
+    res.status(201).json({
+      success: true, message: 'Admin registered successfully',
+      data: { token, user: { id: user._id, name: user.name, email: user.email, role: user.role } }
+    });
+  } catch (error) {
+    console.error('Admin registration error:', error);
+    res.status(500).json({ success: false, message: 'Server error during admin registration' });
+  }
+});
+
 module.exports = router;

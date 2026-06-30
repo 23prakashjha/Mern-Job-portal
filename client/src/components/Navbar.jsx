@@ -15,6 +15,8 @@ import {
   FaTimes,
   FaUser,
   FaUserCircle,
+  FaUserShield,
+  FaShieldAlt,
 } from "react-icons/fa";
 
 const Navbar = () => {
@@ -109,10 +111,11 @@ const Navbar = () => {
                 <div className="relative">
                   <button
                     onClick={() => setDropdown((value) => !value)}
-                    className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-950 text-white transition hover:bg-slate-800"
+                    className="flex items-center gap-3 rounded-full bg-slate-950 pl-3 pr-5 py-2 text-white transition hover:bg-slate-800"
                     aria-label="Open account menu"
                   >
-                    <FaUserCircle size={24} />
+                    {user.role === "admin" ? <FaUserShield size={20} /> : <FaUserCircle size={20} />}
+                    <span className="text-sm font-bold max-w-[120px] truncate">{user.name}</span>
                   </button>
 
                   <AnimatePresence>
@@ -125,6 +128,9 @@ const Navbar = () => {
                       >
                         {user.role === "recruiter" && (
                           <MenuLink to="/recruiter/dashboard" icon={FaTachometerAlt} label="Dashboard" />
+                        )}
+                        {user.role === "admin" && (
+                          <MenuLink to="/admin/dashboard" icon={FaShieldAlt} label="Admin Dashboard" />
                         )}
                         <MenuLink to="/profile" icon={FaUser} label="Profile" />
                         <MenuLink to="/settings" icon={FaCog} label="Settings" />
@@ -188,7 +194,14 @@ const Navbar = () => {
                     </>
                   ) : (
                     <>
+                      <div className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-500 border-b border-slate-100 mb-2">
+                        {user.role === "admin" ? <FaUserShield /> : <FaUserCircle />}
+                        <span className="truncate">{user.name}</span>
+                      </div>
                       {user.role === "recruiter" && <MenuLink to="/recruiter/dashboard" icon={FaTachometerAlt} label="Dashboard" />}
+                      {user.role === "admin" && (
+                        <MenuLink to="/admin/dashboard" icon={FaShieldAlt} label="Admin Dashboard" />
+                      )}
                       <MenuLink to="/profile" icon={FaUser} label="Profile" />
                       <MenuLink to="/settings" icon={FaCog} label="Settings" />
                       <button onClick={handleLogout} className="flex items-center gap-3 rounded-2xl px-4 py-3 font-bold text-rose-600">

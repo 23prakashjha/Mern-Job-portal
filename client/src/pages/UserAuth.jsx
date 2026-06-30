@@ -3,34 +3,61 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import api from "../services/api";
 import { FcGoogle } from "react-icons/fc";
-import { FaArrowRight, FaEnvelope, FaEye, FaEyeSlash, FaLock, FaRocket, FaUser } from "react-icons/fa";
+import {
+  FaArrowRight, FaEnvelope, FaEye, FaEyeSlash, FaLock, FaRocket,
+  FaUser, FaUserShield, FaKey
+} from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
+
+const TABS = [
+  { key: "user", label: "User", icon: FaUser },
+  { key: "admin", label: "Admin", icon: FaUserShield },
+];
 
 const UserAuth = () => {
   const { login } = useContext(AuthContext);
+  const [tab, setTab] = useState("user");
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    name: "", email: "", password: "", adminSecret: ""
+  });
 
-  const handleChange = (event) => setForm({ ...form, [event.target.name]: event.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const toggleMode = () => {
-    setForm({ name: "", email: "", password: "" });
-    setIsLogin((value) => !value);
+    setForm({ name: "", email: "", password: "", adminSecret: "" });
+    setIsLogin((v) => !v);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const switchTab = (key) => {
+    setTab(key);
+    setForm({ name: "", email: "", password: "", adminSecret: "" });
+    setIsLogin(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setLoading(true);
 
     try {
       if (isLogin) {
         await login(form.email, form.password);
         toast.success("Login successful");
-      } else {
-        await api.post("/auth/register", form);
+      } else if (tab === "user") {
+        await api.post("/auth/register", {
+          name: form.name, email: form.email, password: form.password
+        });
         toast.success("Registered successfully. Please login.");
+        toggleMode();
+      } else {
+        await api.post("/auth/admin/register", {
+          name: form.name, email: form.email,
+          password: form.password, adminSecret: form.adminSecret
+        });
+        toast.success("Admin registered successfully. Please login.");
         toggleMode();
       }
     } catch (err) {
@@ -55,12 +82,15 @@ const UserAuth = () => {
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <section className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_460px] lg:items-center">
         <div className="hidden lg:block">
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-cyan-600">Welcome to HireNest</p>
-          <h1 className="mt-4 max-w-2xl text-6xl font-black leading-tight">Your profile is the start of your next opportunity.</h1>
+          <p className="text-sm font-black uppercase tracking-[0.2em] text-cyan-600">
+            Welcome to HireNest
+          </p>
+          <h1 className="mt-4 max-w-2xl text-6xl font-black leading-tight">
+            Your profile is the start of your next opportunity.
+          </h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
             Sign in to apply faster, build resumes, check ATS performance, and keep your job search organized.
           </p>
-
           <div className="mt-8 grid max-w-xl grid-cols-3 gap-4">
             {["Fast apply", "ATS tools", "Verified roles"].map((item) => (
               <div key={item} className="rounded-2xl border border-slate-200 bg-white p-4 text-center font-black shadow-sm">
@@ -77,12 +107,35 @@ const UserAuth = () => {
           className="w-full"
         >
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-950/10 sm:p-8">
+            {/* Tabs */}
+            <div className="mb-6 flex rounded-2xl bg-slate-100 p-1">
+              {TABS.map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  onClick={() => switchTab(key)}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-black transition ${
+                    tab === key
+                      ? "bg-white text-slate-950 shadow-sm"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  <Icon /> {label}
+                </button>
+              ))}
+            </div>
+
             <div className="mb-8 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-950 text-2xl text-cyan-300">
                 <FaRocket />
               </div>
-              <h2 className="text-3xl font-black">{isLogin ? "Welcome back" : "Create account"}</h2>
-              <p className="mt-2 text-slate-500">{isLogin ? "Sign in to continue your search." : "Join HireNest and start applying."}</p>
+              <h2 className="text-3xl font-black">
+                {isLogin ? "Welcome back" : `Create ${tab === "admin" ? "admin" : ""} account`}
+              </h2>
+              <p className="mt-2 text-slate-500">
+                {isLogin
+                  ? `Sign in to your ${tab} account.`
+                  : `Join as ${tab === "admin" ? "an admin" : "a user"} and get started.`}
+              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -124,13 +177,27 @@ const UserAuth = () => {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((value) => !value)}
+                  onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-cyan-700"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </Field>
+
+              {!isLogin && tab === "admin" && (
+                <Field icon={FaKey}>
+                  <input
+                    type="password"
+                    name="adminSecret"
+                    value={form.adminSecret}
+                    placeholder="Admin secret key"
+                    onChange={handleChange}
+                    required
+                    className="auth-input"
+                  />
+                </Field>
+              )}
 
               <button
                 type="submit"
@@ -139,7 +206,7 @@ const UserAuth = () => {
               >
                 {loading ? (
                   <>
-                    <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                     Please wait
                   </>
                 ) : (
@@ -166,8 +233,13 @@ const UserAuth = () => {
             </button>
 
             <p className="mt-7 text-center text-slate-600">
-              {isLogin ? "Do not have an account?" : "Already have an account?"}
-              <button onClick={toggleMode} className="ml-2 font-black text-cyan-700 hover:text-cyan-600">
+              {isLogin
+                ? `Don't have a${tab === "admin" ? "n admin" : ""} account?`
+                : "Already have an account?"}
+              <button
+                onClick={toggleMode}
+                className="ml-2 font-black text-cyan-700 hover:text-cyan-600"
+              >
                 {isLogin ? "Sign up" : "Sign in"}
               </button>
             </p>

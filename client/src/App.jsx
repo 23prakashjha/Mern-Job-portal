@@ -24,11 +24,13 @@ import ManageJobs from "./recruiter/ManageJobs";
 import Applicants from "./recruiter/Applicants";
 import Shortlisted from "./recruiter/Shortlisted";
 
+import AdminDashboard from "./admin/Dashboard";
+
 const App = () => {
   const location = useLocation();
 
-  // 🔥 Hide Navbar & Footer on recruiter panel
-  const hideLayout = location.pathname.startsWith("/recruiter");
+  // 🔥 Hide Navbar & Footer on recruiter/admin panel
+  const hideLayout = location.pathname.startsWith("/recruiter") || location.pathname.startsWith("/admin");
 
   return (
     <>
@@ -116,6 +118,16 @@ const App = () => {
           element={
             <ProtectedRoute role="recruiter">
               <Shortlisted />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Protected */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />
