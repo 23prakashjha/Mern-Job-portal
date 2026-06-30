@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     setUser(user);
     setToken(token);
 
-    if (res.data.user.role === "recruiter") {
+    if (user.role === "recruiter") {
       navigate("/recruiter/dashboard");
     } else {
       navigate("/");
