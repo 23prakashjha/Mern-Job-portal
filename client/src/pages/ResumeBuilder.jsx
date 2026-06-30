@@ -5,7 +5,8 @@ import html2canvas from 'html2canvas';
 import { FaSave, FaDownload, FaUserTie } from "react-icons/fa";
 
 const ResumeBuilder = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  let user = null;
+  try { user = JSON.parse(localStorage.getItem("user")); } catch {}
 
   const [loading, setLoading] = useState(false);
 

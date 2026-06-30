@@ -27,7 +27,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    let storedUser = null;
+    try { storedUser = JSON.parse(localStorage.getItem("user")); } catch {}
     if (storedUser) setUser(storedUser);
 
     const fetchStats = async () => {

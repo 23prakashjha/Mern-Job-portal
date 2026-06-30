@@ -26,7 +26,8 @@ const Navbar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    let storedUser = null;
+    try { storedUser = JSON.parse(localStorage.getItem("user")); } catch {}
     setUser(storedUser || null);
     setDropdown(false);
     setMobileMenu(false);

@@ -33,7 +33,8 @@ const JobDetails = () => {
   const [status, setStatus] = useState(null);
   const [saved, setSaved] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  let user = null;
+  try { user = JSON.parse(localStorage.getItem("user")); } catch {}
 
   // FETCH JOB
   useEffect(() => {

@@ -11,7 +11,8 @@ const Shortlisted = () => {
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  let user = null;
+  try { user = JSON.parse(localStorage.getItem("user")); } catch {}
 
   useEffect(() => {
     if (!user || user.role !== "recruiter") {

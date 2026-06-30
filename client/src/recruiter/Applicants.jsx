@@ -14,7 +14,8 @@ const Applicants = () => {
   const [loading, setLoading] = useState(true);
   const [action, setAction] = useState({ id: null, type: null, loading: false });
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  let user = null;
+  try { user = JSON.parse(localStorage.getItem("user")); } catch {}
 
   useEffect(() => {
     if (!user || user.role !== "recruiter") {

@@ -43,7 +43,8 @@ const RecruiterAuth = () => {
       await login(form.email, form.password);
       
       // Check if user is recruiter after login
-      const user = JSON.parse(localStorage.getItem("user"));
+      let user = null;
+      try { user = JSON.parse(localStorage.getItem("user")); } catch {}
       if (user.role !== "recruiter") {
         toast.error("Access denied! Not a recruiter.");
         setLoading(false);
